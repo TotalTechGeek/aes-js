@@ -376,15 +376,15 @@ Another possibility, is to use a hashing function, such as SHA256 to hash the pa
 Initialization Vectors 
 -----------
 
-Each of the block cipher modes above (except ECB) rely upon an initialization vector for the security of the encryption scheme. 
+Each of the block cipher modes above (except ECB) rely upon an initialization vector for the security of the encryption scheme. If this value is not set, and the same key is re-used, your encryption could be broken. 
 
-If an initialization vector is not provided, it will default to a null initialization vector (except in counter mode, where it will start at 1). 
+If an initialization vector is not provided, it will default to a null initialization vector (except in counter mode, where it will default to 1). 
 
-If a boolean set to true is passed in, one will be randomly generated (taking advantage of cryptographically secure random generators when possible). It does not need to be kept secret, it merely needs to be unique and random. 
+Optionally, if a boolean (set to true) is passed as an IV, one will be randomly generated, taking advantage of cryptographically secure random generators when possible. This value does not need to be kept secret.  
 
-It is common practice to place the IV at the start of the payload, in plain text. 
+It is common practice to concatenate the IV at the beginning of the encrypted payload. 
 
-You will be able to retrieve the initialization vector by calling a function.
+You will be able to retrieve the initialization vector from the cipher by calling a function.
 
 Example:
 
