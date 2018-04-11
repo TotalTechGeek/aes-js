@@ -15,7 +15,7 @@
         var text = 'Text may be any length you wish, no padding is required at all.';
         var textBytes = aesjs.utils.utf8.toBytes(text);
 
-        aesCtr = new aesjs.ModeOfOperation.ctr(key_256_array);
+        aesCtr = new aesjs.ModeOfOperation.ctr(key_256_array, true);
 
         var enc = aesCtr.encrypt(textBytes)
 

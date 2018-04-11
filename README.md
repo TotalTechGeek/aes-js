@@ -130,7 +130,8 @@ var key = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 ];
 var text = 'Text may be any length you wish, no padding is required.';
 var textBytes = aesjs.utils.utf8.toBytes(text);
 
-// The counter is optional, and if omitted will generate random IV.
+// The counter is optional, and if omitted will start at 1.
+// You may optionally pass in a boolean set to "true" to generate a random IV. 
 var aesCtr = new aesjs.ModeOfOperation.ctr(key, new aesjs.Counter(5));
 var encryptedBytes = aesCtr.encrypt(textBytes);
 
@@ -375,7 +376,11 @@ Another possibility, is to use a hashing function, such as SHA256 to hash the pa
 Initialization Vectors 
 -----------
 
-Each of the block cipher modes supported above rely upon an initialization vector for the security of the encryption scheme. If an initialization vector is not provided, one will be randomly generated (taking advantage of cryptographically secure random generators when possible). It does not need to be kept secret, it merely needs to be unique and random. 
+Each of the block cipher modes above (except ECB) rely upon an initialization vector for the security of the encryption scheme. 
+
+If an initialization vector is not provided, it will default to a null initialization vector (except in counter mode, where it will start at 1). 
+
+If a boolean set to true is passed in, one will be randomly generated (taking advantage of cryptographically secure random generators when possible). It does not need to be kept secret, it merely needs to be unique and random. 
 
 It is common practice to place the IV at the start of the payload, in plain text. 
 
@@ -385,7 +390,7 @@ Example:
 
 ```javascript
 // Creates the cipher in CTR mode
-var ctr = new aesjs.ModeOfOperation.ctr(key);
+var ctr = new aesjs.ModeOfOperation.ctr(key, true);
 
 // Retrieves the initialization vector.
 var iv = ctr.iv();

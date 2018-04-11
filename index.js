@@ -62,13 +62,11 @@
         var arr = createArray(length);
 
         // For Modern Web Browsers
-        if(typeof(window) !== "undefined" && typeof(window.crypto) !== "undefined")
-        {
+        if(typeof(window) !== "undefined" && typeof(window.crypto) !== "undefined") {
             window.crypto.getRandomValues(arr);
         }
         // For Node.js Processes
-        else if((typeof process !== 'undefined') && (process.release.name.search(/node|io.js/) !== -1))
-        {
+        else if((typeof process !== 'undefined') && (process.release.name.search(/node|io.js/) !== -1)) {
             var crypto = require('crypto')
             crypto.randomFillSync(arr);
         }
@@ -76,8 +74,7 @@
         {
             // Warning: Not Secure for certain types of Cipher Modes. 
             // CTR is fine with this.
-            for(var i = 0; i < arr.length; i++)
-            {
+            for(var i = 0; i < arr.length; i++) {
                 arr[i] = Math.floor(Math.random() * 256);
             }
         }
@@ -467,15 +464,19 @@
         this.description = "Cipher Block Chaining";
         this.name = "cbc";
 
-        if (!iv) {
+        
+        if(typeof iv === "boolean" && iv) {
             iv = createRandomArray(BLOCK_SIZE);
+        }
+        else if (!iv) {
+            iv = createArray(BLOCK_SIZE);
         } else if (iv.length != BLOCK_SIZE) {
             throw new Error('invalid initialation vector size (must be 16 bytes)');
         }
 
 
         this._lastCipherblock = coerceArray(iv, true);
-        this._iv = this._lastCipherblock.slice(0);
+        this._iv = new Uint8Array(this._lastCipherblock);
         this._aes = new AES(key);
     }
 
@@ -544,8 +545,11 @@
         this.description = "Cipher Feedback";
         this.name = "cfb";
 
-        if (!iv) {
+        if(typeof iv === "boolean" && iv) {
             iv = createRandomArray(BLOCK_SIZE);
+        }
+        else if (!iv) {
+            iv = createArray(BLOCK_SIZE);
         } else if (iv.length != BLOCK_SIZE) {
             throw new Error('invalid initialation vector size (must be 16 size)');
         }
@@ -555,7 +559,7 @@
         this.segmentSize = segmentSize;
 
         this._shiftRegister = coerceArray(iv, true);
-        this._iv = this._shiftRegister.slice(0);
+        this._iv = new Uint8Array(this._shiftRegister);
         this._aes = new AES(key);
     }
 
@@ -620,8 +624,12 @@
         this.description = "Output Feedback";
         this.name = "ofb";
 
-        if (!iv) {
+        
+        if(typeof iv === "boolean" && iv) {
             iv = createRandomArray(BLOCK_SIZE);
+        }
+        else if (!iv) {
+            iv = createArray(BLOCK_SIZE);
 
         } else if (iv.length != BLOCK_SIZE) {
             throw new Error('invalid initialation vector size (must be 16 bytes)');
@@ -629,7 +637,7 @@
 
         this._lastPrecipher = coerceArray(iv, true);
         this._lastPrecipherIndex = BLOCK_SIZE;
-        this._iv = this._lastPrecipher.slice(0);
+        this._iv = new Uint8Array(this._lastPrecipher);
         this._aes = new AES(key);
     }
 
@@ -663,9 +671,13 @@
         if (!(this instanceof Counter)) {
             throw Error('Counter must be instanitated with `new`');
         }
+        
+        if(typeof initialValue === "boolean" && initialValue) {
+            initialValue = createRandomArray(BLOCK_SIZE);
+        }
 
-        // We allow 0, but anything false-ish generates a random initialization vector.
-        if (initialValue !== 0 && !initialValue) { initialValue = createRandomArray(BLOCK_SIZE); }
+        // We allow 0, but anything false-ish generates vector starting at 1.
+        if (initialValue !== 0 && !initialValue) { initialValue = 1; }
 
         if (typeof(initialValue) === 'number') {
             this._counter = createArray(BLOCK_SIZE);
@@ -674,7 +686,7 @@
             this.setBytes(initialValue);
         }
 
-        this._iv = this._counter.slice(0);
+        this._iv = new Uint8Array(this._counter);
     }
 
     Counter.prototype.iv = function()
