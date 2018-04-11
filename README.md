@@ -380,7 +380,7 @@ Each of the block cipher modes above (except ECB) rely upon an initialization ve
 
 If an initialization vector is not provided, it will default to a null initialization vector (except in counter mode, where it will default to 1). 
 
-Optionally, if a boolean (set to true) is passed as an IV, one will be randomly generated, taking advantage of cryptographically secure random generators when possible. This value does not need to be kept secret.  
+Optionally, if a boolean (true) is passed as an IV, the initialization vector will be randomly generated. This value does not need to be kept secret.  
 
 It is common practice to concatenate the IV at the beginning of the encrypted payload. 
 
